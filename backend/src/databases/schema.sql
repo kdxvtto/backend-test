@@ -1,0 +1,99 @@
+CREATE TABLE products (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    cost_price DECIMAL(10, 2) NOT NULL,
+    stock_quantity INT UNSIGNED NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE add_ons (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    cost_price DECIMAL(10, 2) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE product_add_ons (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    product_id INT UNSIGNED NOT NULL,
+    add_on_id INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY unique_product_add_on (product_id, add_on_id),
+
+    CONSTRAINT fk_product_add_on_product FOREIGN KEY (product_id) REFERENCES products(id),
+    CONSTRAINT fk_product_add_on_add_on FOREIGN KEY (add_on_id) REFERENCES add_ons(id)
+);
+
+CREATE TABLE orders (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    order_number VARCHAR(255) NOT NULL UNIQUE,
+    customer_name VARCHAR(255) NOT NULL,
+    status enum('pending', 'paid', 'cancelled') NOT NULL DEFAULT 'pending',
+    subtotal DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    discount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    tax DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    total DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    notes TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE order_items (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    order_id INT UNSIGNED NOT NULL,
+    product_id INT UNSIGNED NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
+    quantity INT UNSIGNED NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    unit_cost DECIMAL(10, 2) NOT NULL,
+    subtotal DECIMAL(10, 2) NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_order_item_order FOREIGN KEY (order_id) REFERENCES orders(id),
+    CONSTRAINT fk_order_item_product FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+CREATE TABLE order_item_add_ons (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    order_item_id INT UNSIGNED NOT NULL,
+    add_on_id INT UNSIGNED NOT NULL,
+    add_on_name VARCHAR(255) NOT NULL,
+    quantity INT UNSIGNED NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    unit_cost DECIMAL(10, 2) NOT NULL,
+    subtotal DECIMAL(10, 2) NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_order_item_add_on_order_item FOREIGN KEY (order_item_id) REFERENCES order_items(id),
+    CONSTRAINT fk_order_item_add_on_add_on FOREIGN KEY (add_on_id) REFERENCES add_ons(id)
+);
+
+CREATE TABLE payments (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    order_id INT UNSIGNED NOT NULL,
+    payment_method enum('cash', 'card') NOT NULL DEFAULT 'cash',
+    payment_status enum('pending', 'paid', 'failed') NOT NULL DEFAULT 'pending',
+    amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    change_amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    paid_at TIMESTAMP NULL DEFAULT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_payment_order FOREIGN KEY (order_id) REFERENCES orders(id)
+);
