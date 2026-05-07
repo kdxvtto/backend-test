@@ -1,7 +1,7 @@
 import pool from "../configs/database.js";
 
-export const findAllOrders = async () => {
-    const [rows] = await pool.query(`
+export const findAllOrders = async (db = pool) => {
+    const [rows] = await db.query(`
         SELECT
             id,
             order_number,
@@ -19,8 +19,8 @@ export const findAllOrders = async () => {
     return rows;
 };
 
-export const findOrderById = async (id) => {
-    const [rows] = await pool.query(
+export const findOrderById = async (id, db = pool) => {
+    const [rows] = await db.query(
         `
         SELECT
             id,
@@ -42,8 +42,8 @@ export const findOrderById = async (id) => {
     return rows[0] || null;
 };
 
-export const findOrderItems = async (orderId) => {
-    const [rows] = await pool.query(
+export const findOrderItems = async (orderId, db = pool) => {
+    const [rows] = await db.query(
         `
         SELECT
             id,
@@ -64,8 +64,8 @@ export const findOrderItems = async (orderId) => {
     return rows;
 };
 
-export const findOrderItemAddOns = async (orderId) => {
-    const [rows] = await pool.query(
+export const findOrderItemAddOns = async (orderId, db = pool) => {
+    const [rows] = await db.query(
         `
         SELECT
             oia.id,
@@ -87,8 +87,8 @@ export const findOrderItemAddOns = async (orderId) => {
     return rows;
 };
 
-export const findPaymentByOrderId = async (orderId) => {
-    const [rows] = await pool.query(
+export const findPaymentByOrderId = async (orderId, db = pool) => {
+    const [rows] = await db.query(
         `
         SELECT
             id,

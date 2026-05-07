@@ -1,7 +1,7 @@
 import pool from "../configs/database.js";
 
-export const findAllAddOns = async () => {
-    const [rows] = await pool.query(`
+export const findAllAddOns = async (db = pool) => {
+    const [rows] = await db.query(`
         SELECT
             id,
             name,
@@ -16,8 +16,8 @@ export const findAllAddOns = async () => {
     return rows;
 };
 
-export const findAddOnById = async (id) => {
-    const [rows] = await pool.query(
+export const findAddOnById = async (id, db = pool) => {
+    const [rows] = await db.query(
         `
         SELECT
             id,
@@ -35,8 +35,8 @@ export const findAddOnById = async (id) => {
     return rows[0] || null;
 };
 
-export const createAddOn = async (addOn) => {
-    const [result] = await pool.query(
+export const createAddOn = async (addOn, db = pool) => {
+    const [result] = await db.query(
         `
         INSERT INTO add_ons (
             name,
@@ -58,7 +58,7 @@ export const createAddOn = async (addOn) => {
     return result.insertId;
 };
 
-export const updateAddOn = async (id, addOn) => {
+export const updateAddOn = async (id, addOn, db = pool) => {
     const allowedFields = [
         'name',
         'description',
@@ -82,7 +82,7 @@ export const updateAddOn = async (id, addOn) => {
 
     values.push(id);
 
-    const [result] = await pool.query(
+    const [result] = await db.query(
         `
         UPDATE add_ons
         SET ${fields.join(', ')}
@@ -94,8 +94,8 @@ export const updateAddOn = async (id, addOn) => {
     return result.affectedRows > 0;
 };
 
-export const deactivateAddOn = async (id) => {
-    const [result] = await pool.query(
+export const deactivateAddOn = async (id, db = pool) => {
+    const [result] = await db.query(
         `
         UPDATE add_ons
         SET is_active = FALSE
@@ -105,4 +105,21 @@ export const deactivateAddOn = async (id) => {
     );
 
     return result.affectedRows > 0;
+};
+
+export const findProductAddOn = async (productId, addOnId, db = pool) => {
+    const [rows] = await db.query(
+        `
+        SELECT
+            id,
+            product_id,
+            add_on_id
+        FROM product_add_ons
+        WHERE product_id = ? AND add_on_id = ?
+        LIMIT 1
+        `,
+        [productId, addOnId]
+    );
+
+    return rows[0] || null;
 };
