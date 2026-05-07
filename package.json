@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "Point of Sale RESTful API",
   "type": "module",
-  "main": "src/server.js",
+  "main": "backend/src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
-    "migrate": "node src/database/migrate.js",
-    "seed": "node src/database/seed.js",
+    "start": "node backend/src/server.js",
+    "dev": "nodemon backend/src/server.js",
+    "migrate": "node backend/src/databases/migrate.js",
+    "seed": "node backend/src/databases/seed.js",
     "migrate:seed": "npm run migrate && npm run seed"
   },
   "dependencies": {
