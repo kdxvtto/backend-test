@@ -20,7 +20,7 @@ backend/src/
   configs/        koneksi database
   controllers/    handler request dan response HTTP
   databases/      schema, migration, dan seed
-  docs/           OpenAPI spec
+  docs/           postman, dbdiagram, opeanAPI specs
   middlewares/    error handling dan not found handler
   repositories/   query database
   routes/         definisi endpoint
