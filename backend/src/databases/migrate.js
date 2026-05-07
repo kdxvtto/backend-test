@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
-dotenv.config({ path: ".env.example" });
+dotenv.config();
 
 const { default: pool } = await import("../configs/database.js");
 
