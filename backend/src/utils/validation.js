@@ -13,7 +13,15 @@ export const validate = (schema, source = 'body') => {
             return next(createError(400, 'Validation error', errors));
         }
 
-        req[source] = result.data;
+        if (source === 'body') {
+            req.body = result.data;
+        } else {
+            req.validated = {
+                ...(req.validated || {}),
+                [source]: result.data
+            };
+        }
+
         return next();
     };
 };
